@@ -9,11 +9,13 @@ class SearchQueryProvider extends Notifier<String> {
     return '';
   }
 
-  void updateQueryProvider({required String query}) {
+  void updateQuery({required String query}) {
     state = query;
   }
 
   void clear() {
     state = '';
   }
+
+  
 }

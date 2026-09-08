@@ -1,66 +1,43 @@
-import 'package:fix_now_aman_alkhdraa/core/config/di.dart';
-import 'package:fix_now_aman_alkhdraa/models/services_model.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+
+import '../core/config/di.dart';
+import '/models/service_model.dart';
+import '/repos/service_repo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../datasources/service_remote_datasource.dart';
 
-// final serviceRemoteDatasourceProvider = Provider<ServiceRemoteDatasource>((ref) {
-//   return getIt.get<ServiceRemoteDatasource>();
-// });
+final serviceProvider =
+    AsyncNotifierProvider<ServiceAsyncNotifierProvider, List<ServiceModel>>(() {
+      return ServiceAsyncNotifierProvider(
+        serviceRepo: ServiceRepo(
+          serviceRemoteDatasource: ServiceRemoteDatasource(
+            dio: Dio(),
+            secureStorage: FlutterSecureStorage(),
+          ),
+          internetConnectionChecker: getIt.get<InternetConnectionChecker>(),
+        ),
+      );
+    });
 
+class ServiceAsyncNotifierProvider extends AsyncNotifier<List<ServiceModel>> {
+  final ServiceRepo _serviceRepo;
 
-// final ServiceProvider =
-//     AsyncNotifierProvider<ServiceAsyncNotifierProvider, List<ServicesModel>>(() {
-//       return ServiceAsyncNotifierProvider();
-//     });
+  ServiceAsyncNotifierProvider({required this._serviceRepo});
 
+  @override
+  Future<List<ServiceModel>> build() async {
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // var services = ref.read(_serviceRepo);
 
-// class ServiceAsyncNotifierProvider extends AsyncNotifier<List<ServicesModel>> {
-//   @override
-//   Future<List<ServicesModel>> build() async {
-//     var servicesServices = ref.read(serviceRemoteDatasourceProvider);
-//     List<ServicesModel>? services = await serviceRemoteDatasourceProvider.getAll();
-//     if (services == null) {
-//       throw Exception("failed to fecth data.");
-//     }
-//     return services;
-//   }
-// }
+    List<ServiceModel>? servicesResult = await _serviceRepo.getAll();
 
-List<ServicesModel> list = [
-      ServicesModel(
-        name: 'name',
-        rating: 5.0,
-        description:
-            'Comprehensive home deep cleaning service including all rooms and appliances.',
-        price: 110,
-        image: 'image',
-        id: 1,
-      ),
-      ServicesModel(
-        name: 'name',
-        rating: 5.0,
-        description:
-            'Comprehensive home deep cleaning service including all rooms and appliances.',
-        price: 110,
-        image: 'image',
-        id: 2,
-      ),
-      ServicesModel(
-        name: 'name',
-        rating: 5.0,
-        description:
-            'Comprehensive home deep cleaning service including all rooms and appliances.',
-        price: 110,
-        image: 'image',
-        id: 3,
-      ),
-    ];
-    
-final serviceProvider = Provider<List<ServicesModel>>((ref) {
-  // List<ServicesModel> service = List.generate(
-  //   list.length,
-  //   (index) => ServicesModel.fromMap(list[index]),
-  // );
-  return list;
-});
+    if (servicesResult == null) {
+         print('############################$servicesResult');
+ throw Exception("failed to fecth data.");
+    }
+    return servicesResult;
+  }
+}

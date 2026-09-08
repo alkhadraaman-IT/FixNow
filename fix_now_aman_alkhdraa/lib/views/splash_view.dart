@@ -1,18 +1,23 @@
 import 'dart:async';
 
+import '/core/provider/user_session_provider.dart';
+import '/views/login_view.dart';
+import '/widgets/main_navigation_bar_widget.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../widgets/custom_clip_path.dart';
 import '../widgets/custom_clip_path_circle_up.dart';
 import '/views/onbording_view.dart';
 import 'package:flutter/material.dart';
 
-class SplashView extends StatefulWidget {
+class SplashView extends ConsumerStatefulWidget {
   const SplashView({super.key});
 
   @override
-  State<SplashView> createState() => _SplashViewState();
+  ConsumerState<SplashView> createState() => _SplashViewState();
 }
 
-class _SplashViewState extends State<SplashView> {
+class _SplashViewState extends ConsumerState<SplashView> {
   @override
   void initState() {
     Timer(Duration(seconds: 3), () {
@@ -26,6 +31,28 @@ class _SplashViewState extends State<SplashView> {
 
   @override
   Widget build(BuildContext context) {
+    // ref.watch(userSessionProvider);
+    // ref.listen<AsyncValue<void>>(userSessionProvider, (previous, next) {
+    //   if (previous!.isLoading && next.hasValue) {
+    //     if (userSessionProvider.isCompleteOnboarding == false) {
+    //       Navigator.pushReplacement(
+    //         context,
+    //         MaterialPageRoute(builder: (context) => OnbordingView()),
+    //       );
+    //     } else if (isCompleteOnboarding == true && authenticated == false) {
+    //       Navigator.pushReplacement(
+    //         context,
+    //         MaterialPageRoute(builder: (context) => LoginView()),
+    //       );
+    //     } else if (isCompleteOnboarding == true && authenticated == true) {
+    //       Navigator.pushReplacement(
+    //         context,
+    //         MaterialPageRoute(builder: (context) => MainNavigationBarWidget()),
+    //       );
+    //     }
+    //   }
+    // });
+
     double screenHeight = MediaQuery.heightOf(context);
     double screenWidth = MediaQuery.widthOf(context);
 
@@ -36,7 +63,7 @@ class _SplashViewState extends State<SplashView> {
         mainAxisAlignment: .center,
         children: [
           ClipPath(
-            clipper:CustomClipPathCircleUp(),
+            clipper: CustomClipPathCircleUp(),
             child: Container(
               height: MediaQuery.heightOf(context) / 4,
               width: MediaQuery.widthOf(context),

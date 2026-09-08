@@ -1,26 +1,32 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:fix_now_aman_alkhdraa/provider/service_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '/provider/cart_provider.dart';
+
+import '../models/service_model.dart';
 import '/views/provider_profile_view.dart';
 import '/views/service_booked_view.dart';
 
-import '../models/services_model.dart';
-import 'package:flutter/material.dart';
-
-class DetailsView extends StatelessWidget {
-  const DetailsView({super.key});
+class DetailsView extends ConsumerWidget {
+  final ServiceModel service;
+  const DetailsView({super.key, required this.service});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(cartProvider);
     double screenWidth = MediaQuery.widthOf(context);
     double screenHeight = MediaQuery.heightOf(context);
-    ServicesModel list = ServicesModel(
-      name: 'name',
-      rating: 4.8,
-      description: 'descriptiondescriptiondescription description',
-      price: 50,
-      image: 'image',
-      id: 1,
-    );
+    // ServiceModel list = ServiceModel(
+    //   name: 'name',
+    //   rating: 4.8,
+    //   description: 'descriptiondescriptiondescription description',
+    //   price: 50,
+    //   image: 'image',
+    //   id: 1,
+    // );
     return Scaffold(
       appBar: AppBar(title: Text("FixNow")),
       body: SingleChildScrollView(
@@ -47,20 +53,19 @@ class DetailsView extends StatelessWidget {
                           ClipRRect(
                             borderRadius: BorderRadiusGeometry.circular(12.r),
                             child: Hero(
-                              tag: 'service image ${list.id}',
+                              tag: 'service image ${service.id}',
                               child: Container(
                                 height: 267.h,
                                 // height: 300,
                                 width: screenWidth.w,
                                 alignment: .topRight,
                                 decoration: BoxDecoration(
-                                 //!!!!!!!!!!!!!!!!!!!!!!!!
-                                  // image: DecorationImage(
-                                  //   image:
-                                  //       NetworkImage(list.image) ??
-                                  //       AssetImage('assets/image/logo.png'),
-                                  //   fit: .fill,
-                                  // ),
+                                  image: DecorationImage(
+                                    image:
+                                        NetworkImage(service.image!) ??
+                                        AssetImage('assets/image/logo.png'),
+                                    fit: .fill,
+                                  ),
                                 ),
                               ),
                             ),
@@ -80,7 +85,9 @@ class DetailsView extends StatelessWidget {
                                       ),
                                       decoration: BoxDecoration(
                                         color: Color(0xff006065),
-                                        borderRadius: BorderRadius.circular(2.r),
+                                        borderRadius: BorderRadius.circular(
+                                          2.r,
+                                        ),
                                       ),
                                       child: Row(
                                         children: [
@@ -91,7 +98,7 @@ class DetailsView extends StatelessWidget {
                                           ),
                                           SizedBox(width: 8.w),
                                           Text(
-                                            '${list.name}',
+                                            '${service.name}',
                                             style: TextStyle(
                                               color: Color(0xffC7FBFF),
                                               fontWeight: FontWeight(600),
@@ -103,7 +110,7 @@ class DetailsView extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      'From \$${list.price}',
+                                      'From \$${service.price}',
                                       style: Theme.of(
                                         context,
                                       ).textTheme.titleSmall,
@@ -111,20 +118,20 @@ class DetailsView extends StatelessWidget {
                                   ],
                                 ),
                                 Text(
-                                  list.name!,
+                                  service.name!,
                                   style: Theme.of(context).textTheme.titleLarge,
                                 ),
                                 Row(
                                   children: [
                                     Icon(Icons.star),
                                     Text(
-                                      list.rating.toString(),
+                                      service.rating.toString(),
                                       style: Theme.of(
                                         context,
                                       ).textTheme.bodySmall,
                                     ),
                                     Text(
-                                      '(${list.rating} reviews)',
+                                      '(${service.rating} reviews)',
                                       style: Theme.of(
                                         context,
                                       ).textTheme.labelMedium,
@@ -161,7 +168,7 @@ class DetailsView extends StatelessWidget {
                             ],
                           ),
                           Text(
-                            list.description!,
+                            service.description!,
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           TextButton(
@@ -204,7 +211,7 @@ class DetailsView extends StatelessWidget {
                                     Icon(Icons.check_sharp, size: 12),
                                     SizedBox(width: 8.w),
                                     Text(
-                                      list.description!,
+                                      service.description!,
                                       style: Theme.of(
                                         context,
                                       ).textTheme.bodyMedium,
@@ -231,7 +238,7 @@ class DetailsView extends StatelessWidget {
                         itemCount: 2,
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
-                            height: (130+40).h,
+                            height: (130 + 40).h,
                             width: screenWidth.w,
                             padding: EdgeInsets.all(16),
                             decoration: BoxDecoration(
@@ -255,19 +262,19 @@ class DetailsView extends StatelessWidget {
                                     child: CircleAvatar(
                                       child: Hero(
                                         tag:
-                                            'provider profile image ${list.id}',
-                                        child: Image.network('${list.image}'),
+                                            'provider profile image ${service.id}',
+                                        child: Image.network('${service.image}'),
                                       ),
                                     ),
                                   ),
                                   title: Text(
-                                    '${list.name}',
+                                    '${service.name}',
                                     style: Theme.of(
                                       context,
                                     ).textTheme.titleMedium,
                                   ),
                                   subtitle: Text(
-                                    '${list.name}',
+                                    '${service.name}',
                                     style: Theme.of(
                                       context,
                                     ).textTheme.labelMedium,
@@ -281,13 +288,13 @@ class DetailsView extends StatelessWidget {
                                       children: [
                                         Icon(Icons.star),
                                         Text(
-                                          list.rating.toString(),
+                                          service.rating.toString(),
                                           style: Theme.of(
                                             context,
                                           ).textTheme.bodySmall,
                                         ),
                                         Text(
-                                          '(${list.rating})',
+                                          '(${service.rating})',
                                           style: Theme.of(
                                             context,
                                           ).textTheme.labelMedium,
@@ -298,7 +305,12 @@ class DetailsView extends StatelessWidget {
                                       height: 32.h,
                                       width: 71.97000122070312.w,
                                       child: FilledButton(
-                                        onPressed: () {},
+
+                                        onPressed: () {
+                                        //   ref
+                                        //       .read(cartProvider.notifier)
+                                        //       .addToCart(service: service);
+                                        },
                                         child: Text(
                                           'select',
                                           style: Theme.of(
@@ -341,7 +353,7 @@ class DetailsView extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       Text(
-                        '(\$${list.price})',
+                        '(\$${service.price})',
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ],
@@ -352,12 +364,10 @@ class DetailsView extends StatelessWidget {
 
                     child: FilledButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ServiceBookedView(),
-                          ),
-                        );
+                        if(ref.read(cartProvider.notifier).isInCartService(service)){
+                          null;
+                        }
+                        ref.read(cartProvider.notifier).addToCart(service: service);
                       },
                       child: Text('Add to Cart'),
                     ),

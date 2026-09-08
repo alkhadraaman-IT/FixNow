@@ -6,6 +6,7 @@ import '../core/models/user_session_model.dart';
 import '../core/storage/app_prefrences.dart';
 import '../core/storage/secure_session_storage.dart';
 
+  
 class AuthRemoteDatasource {
   Dio dio;
   SecureSessionStorage secureSessionStorage;
@@ -37,7 +38,7 @@ class AuthRemoteDatasource {
         secureSessionStorage.saveSession(
           userSession: UserSessionModel(
             accessToken: AppKeys.accessTokenKey,
-            refreshToken: AppKeys.refreshTokenKey,
+            // refreshToken: AppKeys.refreshTokenKey,
           ),
         );
         return true;
@@ -57,10 +58,12 @@ class AuthRemoteDatasource {
       options: Options(
         headers: {
           AppKeys.accessTokenKey: userSession!.accessToken,
-          AppKeys.refreshTokenKey: userSession!.refreshToken,
+          // AppKeys.refreshTokenKey: userSession!.refreshToken,
         },
       ),
     );
     secureSessionStorage.clearSession();
   }
+
+  
 }

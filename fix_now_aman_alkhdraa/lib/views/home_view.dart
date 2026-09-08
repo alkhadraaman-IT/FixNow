@@ -1,3 +1,5 @@
+import '/provider/service_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '/views/search_view.dart';
@@ -5,51 +7,18 @@ import '/views/search_view.dart';
 import '/views/details_view.dart';
 import 'package:flutter/material.dart';
 
-import '../models/services_model.dart';
+import '../models/service_model.dart';
 import '../widgets/card_widget.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends ConsumerWidget {
   const HomeView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var servicesListener = ref.watch(serviceProvider);
+
     double screenWidth = MediaQuery.widthOf(context);
     double screenHeight = MediaQuery.heightOf(context);
-    List<Map<String, String>> categoriesList = [
-      {'name': 'Plumbing', 'icon': 'plumbing'},
-      {'name': 'Electrical', 'icon': 'electrical_services'},
-      {'name': 'AC Repair', 'icon': 'ac_unit'},
-      {'name': 'Cleaning', 'icon': 'cleaning_services'},
-    ];
-    List<ServicesModel> list = [
-      ServicesModel(
-        name: 'name',
-        rating: 5.0,
-        description:
-            'Comprehensive home deep cleaning service including all rooms and appliances.',
-        price: 110,
-        image: 'image',
-        id: 1,
-      ),
-      ServicesModel(
-        name: 'name',
-        rating: 5.0,
-        description:
-            'Comprehensive home deep cleaning service including all rooms and appliances.',
-        price: 110,
-        image: 'image',
-        id: 2,
-      ),
-      ServicesModel(
-        name: 'name',
-        rating: 5.0,
-        description:
-            'Comprehensive home deep cleaning service including all rooms and appliances.',
-        price: 110,
-        image: 'image',
-        id: 3,
-      ),
-    ];
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -134,7 +103,7 @@ class HomeView extends StatelessWidget {
               ),
               SizedBox(height: 48.h),
               SizedBox(
-                height: 149.h,
+                height: 159.h,
                 width: screenWidth.w,
                 child: Card(
                   color: Color(0xffffffff),
@@ -174,7 +143,7 @@ class HomeView extends StatelessWidget {
                 height: 85.h,
                 child: ListView(
                   scrollDirection: .horizontal,
-                  padding: EdgeInsets.symmetric(horizontal:13),
+                  padding: EdgeInsets.symmetric(horizontal: 13),
                   children: [
                     Column(
                       children: [
@@ -188,14 +157,14 @@ class HomeView extends StatelessWidget {
                           ),
                           child: Icon(Icons.plumbing, size: 20),
                         ),
-                        SizedBox(height: 8.h,),
+                        SizedBox(height: 8.h),
                         Text(
                           'Plumbing',
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
                     ),
-                    SizedBox(width: 32.w,),
+                    SizedBox(width: 32.w),
                     Column(
                       children: [
                         Container(
@@ -208,14 +177,14 @@ class HomeView extends StatelessWidget {
                           ),
                           child: Icon(Icons.electrical_services, size: 20),
                         ),
-                        SizedBox(height: 8.h,),
+                        SizedBox(height: 8.h),
                         Text(
                           'Electrical',
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
                     ),
-                    SizedBox(width:32.w ,),
+                    SizedBox(width: 32.w),
                     Column(
                       children: [
                         Container(
@@ -228,14 +197,14 @@ class HomeView extends StatelessWidget {
                           ),
                           child: Icon(Icons.ac_unit_rounded, size: 20),
                         ),
-                        SizedBox(height: 8.h,),
+                        SizedBox(height: 8.h),
                         Text(
                           'AC Repair',
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
                     ),
-                    SizedBox(width:32.w ,),
+                    SizedBox(width: 32.w),
                     Column(
                       children: [
                         Container(
@@ -248,7 +217,7 @@ class HomeView extends StatelessWidget {
                           ),
                           child: Icon(Icons.cleaning_services, size: 20),
                         ),
-                        SizedBox(height: 8.h,),
+                        SizedBox(height: 8.h),
                         Text(
                           'Cleaning',
                           style: Theme.of(context).textTheme.bodyLarge,
@@ -291,119 +260,136 @@ class HomeView extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               SizedBox(height: 16.h),
-              SizedBox(
-                height: 332.h,
-                child: ListView.separated(
-                  scrollDirection: .horizontal,
-                  itemCount: list.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailsView(),
+              servicesListener.when(
+                data: (data) => SizedBox(
+                  height: 332.h,
+                  child: ListView.separated(
+                    scrollDirection: .horizontal,
+                    itemCount: data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailsView(service: data[index],),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          height: 312.5.h,
+                          width: 240.w,
+                          decoration: BoxDecoration(
+                            color: Color(0xffFFFFFF),
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(color: Color(0xffBDC9C9)),
                           ),
-                        );
-                      },
-                      child: Container(
-                        height: 312.5.h,
-                        width: 240.w,
-                        decoration: BoxDecoration(
-                          color: Color(0xffFFFFFF),
-                          borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(color: Color(0xffBDC9C9)),
-                        ),
-                        child: Column(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadiusGeometry.circular(12.r),
-                              child: Hero(
-                                tag: 'service image ${list[1].id}',
-                                child: Container(
-                                  height: 178.5.h,
-                                  width: 240.w,
-                                  alignment: .topRight,
-                                  decoration: BoxDecoration(
-                                   //!!!!!!!!!!!!!!!
-                                    // image: DecorationImage(
-                                    //   image:
-                                    //       NetworkImage(list[1].image) ??
-                                    //       AssetImage('assets/image/logo.png'),
-                                    //   fit: .fill,
-                                    // ),
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadiusGeometry.circular(
+                                  12.r,
+                                ),
+                                child: Hero(
+                                  tag: 'service image ${data[index].id}',
+                                  child: Container(
+                                    height: 178.5.h,
+                                    width: 240.w,
+                                    alignment: .topRight,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image:
+                                            NetworkImage(data[index].image!) ??
+                                            AssetImage('assets/image/logo.png'),
+                                        fit: .fill,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                children: [
-                                  Wrap(
-                                    // mainAxisAlignment: .spaceBetween,
-                                    children: [
-                                      Text(
-                                        list[1].name!,
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.titleMedium,
-                                      ),
-                                      Spacer(),
-                                      Row(
-                                        children: [
-                                          Icon(Icons.star),
-                                          Text(
-                                            '${list[1].rating}(${list[1].rating}+)',
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.bodyLarge,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 24.h),
-                                  Row(
-                                    mainAxisAlignment: .spaceBetween,
-                                    children: [
-                                      RichText(
-                                        text: TextSpan(
+                              Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  children: [
+                                    Wrap(
+                                      // mainAxisAlignment: .spaceBetween,
+                                      children: [
+                                        Text(
+                                          data[index].name!,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.titleMedium,
+                                        ),
+                                        Spacer(),
+                                        Row(
                                           children: [
-                                            TextSpan(
-                                              text: '\$${list[1].price}',
+                                            Icon(Icons.star),
+                                            Text(
+                                              '${data[index].rating}(${data[index].rating}+)',
                                               style: Theme.of(
                                                 context,
-                                              ).textTheme.labelLarge,
-                                            ),
-                                            TextSpan(
-                                              text: '/hr',
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium,
+                                              ).textTheme.bodyLarge,
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                    SizedBox(height: 24.h),
+                                    Row(
+                                      mainAxisAlignment: .spaceBetween,
+                                      children: [
+                                        RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: '\$${data[index].price}',
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.labelLarge,
+                                              ),
+                                              TextSpan(
+                                                text: '/hr',
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.bodyMedium,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return SizedBox(width: 16.w);
-                  },
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return SizedBox(width: 16.w);
+                    },
+                  ),
                 ),
+                error: (error, stackTrace) => Center(
+                  child: Column(
+                    children: [
+                      Icon(Icons.warning_sharp, size: 40),
+                      Text(
+                        error.toString(),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
+                loading: () => Center(child: CircularProgressIndicator()),
               ),
             ],
           ),
         ),
       ),
+      //???????????????????????????????????????????????????????????????????????/
+      // return SizedBox.shrink();
     );
   }
 }

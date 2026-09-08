@@ -1,6 +1,6 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../models/services_model.dart';
+import '../models/service_model.dart';
 import 'package:flutter/material.dart';
 
 class ProviderProfileView extends StatelessWidget {
@@ -10,7 +10,7 @@ class ProviderProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.widthOf(context);
     double screenHeight = MediaQuery.heightOf(context);
-    ServicesModel user = ServicesModel(
+    ServiceModel user = ServiceModel(
       name: 'name',
       rating: 4.8,
       description: 'descriptiondescription description',

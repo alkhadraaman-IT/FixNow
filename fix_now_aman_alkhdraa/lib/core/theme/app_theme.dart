@@ -48,7 +48,7 @@ class AppTheme {
     textTheme: TextTheme(
       titleLarge: TextStyle(
         color: Color(0xff1A1C1C),
-        fontSize: 32,
+        fontSize: 24,
         fontWeight: FontWeight(700),
         fontFamily: 'Plus_Jakarta_Sans',
       ),

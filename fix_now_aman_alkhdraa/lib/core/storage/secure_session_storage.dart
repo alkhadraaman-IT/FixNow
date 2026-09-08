@@ -1,8 +1,10 @@
-import 'package:fix_now_aman_alkhdraa/core/constants/app_key.dart';
-import 'package:fix_now_aman_alkhdraa/core/models/user_session_model.dart';
+import '/core/constants/app_key.dart';
+import '/core/models/user_session_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+
 class SecureSessionStorage {
+  
   final FlutterSecureStorage secureSession;
 
   SecureSessionStorage({required this.secureSession});
@@ -12,10 +14,10 @@ class SecureSessionStorage {
       key: AppKeys.accessTokenKey,
       value: userSession.accessToken,
     );
-    await secureSession.write(
-      key: AppKeys.refreshTokenKey,
-      value: userSession.refreshToken,
-    );
+    // await secureSession.write(
+    //   key: AppKeys.refreshTokenKey,
+    //   value: userSession.refreshToken,
+    // );
   }
 
   Future<UserSessionModel?> getSession() async {
@@ -26,7 +28,7 @@ class SecureSessionStorage {
     if (accessToken != null && refreshToken != null) {
       UserSessionModel userSession = UserSessionModel(
         accessToken: accessToken,
-        refreshToken: refreshToken,
+        // refreshToken: refreshToken,
       );
       return userSession;
     }

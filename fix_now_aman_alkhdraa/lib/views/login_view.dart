@@ -1,19 +1,51 @@
+import '/models/login_model.dart';
+import '/provider/auth_priveder.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../widgets/main_navigation_bar_widget.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends ConsumerWidget {
   const LoginView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     double screenWidth = MediaQuery.widthOf(context);
     double screenHeight = MediaQuery.heightOf(context);
     TextEditingController email = TextEditingController();
     TextEditingController password = TextEditingController();
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+    ref.listen<AsyncValue<void>>(authPriveder, (previous, next) {
+      if (previous?.isLoading == true && next.hasError) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.error.toString())));
+      }
+
+      if (previous?.isLoading == true && next.hasValue) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainNavigationBarWidget()),
+        );
+      }
+    });
+
+    ref.listen<AsyncValue<void>>(authPriveder, (previous, next) {
+      if (previous!.isLoading && next.hasValue) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MainNavigationBarWidget()),
+        );
+      }
+      if (previous.isLoading == true && next.hasError) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.error.toString())));
+      }
+    });
+    
     bool isShowPassword = false;
     return Scaffold(
       body: Form(
@@ -192,12 +224,20 @@ class LoginView extends StatelessWidget {
                     FilledButton(
                       onPressed: () {
                         if (formKey.currentState?.validate() ?? false) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MainNavigationBarWidget(),
-                            ),
-                          );
+                          ref
+                              .read(authPriveder.notifier)
+                              .login(
+                                loginInfo: LoginModel(
+                                  email: email.text,
+                                  password: password.text,
+                                )
+                              );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => MainNavigationBarWidget(),
+                          //   ),
+                          // );
                         }
                       },
                       style: FilledButton.styleFrom(
@@ -209,11 +249,17 @@ class LoginView extends StatelessWidget {
                     Row(
                       mainAxisAlignment: .center,
                       children: [
-                        SizedBox(width: screenWidth / 2 - 70.w, child: Divider()),
+                        SizedBox(
+                          width: screenWidth / 2 - 70.w,
+                          child: Divider(),
+                        ),
                         SizedBox(width: 8.w),
                         Text('OR'),
                         SizedBox(width: 8.w),
-                        SizedBox(width: screenWidth / 2 - 70.w, child: Divider()),
+                        SizedBox(
+                          width: screenWidth / 2 - 70.w,
+                          child: Divider(),
+                        ),
                       ],
                     ),
                     SizedBox(height: 40.h),

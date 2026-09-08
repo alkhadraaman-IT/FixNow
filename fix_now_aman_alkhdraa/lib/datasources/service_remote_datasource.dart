@@ -1,8 +1,21 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dio/dio.dart';
-import '/core/datasources/base_datasource.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../models/services_model.dart';
+import '../core/constants/app_key.dart';
 
+final dioProvider = Provider(((ref) => Dio()));
+
+final secureStorageProvider = Provider((ref) {
+  return FlutterSecureStorage();
+});
+
+final serviceRemoteDatasource = Provider((ref) {
+  final dio = ref.read(dioProvider);
+  final secureStorage = ref.read(secureStorageProvider);
+  return ServiceRemoteDatasource(dio: dio, secureStorage: secureStorage);
+});
 
 class ServiceRemoteDatasource {
   // ServiceRemoteDatasource._();
@@ -13,17 +26,28 @@ class ServiceRemoteDatasource {
   //   }
   //   return _instance!;
   // }
-  
+
   final Dio dio;
   late Response response;
   final String baseUrl = 'http://127.0.0.1:8000/api';
   final String endPoint = 'services';
-  ServiceRemoteDatasource({required this.dio});  
 
-  @override
-  Future<List<Map<String,dynamic>>?> getAll() async {
+  FlutterSecureStorage secureStorage;
+  ServiceRemoteDatasource({required this.dio, required this.secureStorage});
+
+  Future<List<Map<String, dynamic>>?> getAll() async {
     try {
-      response = await dio.get('$baseUrl/$endPoint');
+      response = await dio.get(
+        '$baseUrl/$endPoint',
+        options: Options(
+          headers: {
+            "Authorization":
+                          "Bearer fixnow_token_c906fff322194985b6332d7c1ac4a54b",
+
+                // "Bearer ${secureStorage.read(key: AppKeys.accessTokenKey)}",
+          },
+        ),
+      );
       if (response.statusCode == 200) {
         return response.data;
       }
@@ -34,19 +58,26 @@ class ServiceRemoteDatasource {
     }
   }
 
-  @override
-  Future<Map<String,dynamic>?> getOne({required String itemId}) async {
+  Future<Map<String, dynamic>?> getOne({required String itemId}) async {
     try {
-      response = await dio.get('$baseUrl/$endPoint/$itemId');
+      response = await dio.get(
+        '$baseUrl/$endPoint/$itemId',
+        options: Options(
+          headers: {
+            "Authorization":
+                "Bearer ${secureStorage.read(key: AppKeys.accessTokenKey)}",
+          },
+        ),
+      );
       if (response.statusCode == 200) {
-        return response.data;
+        return response.data['data'];
       }
       return null;
     } catch (e) {
       print(e);
       return null;
     }
-  } 
+  }
 }
 
 // class ServiceRemoteDatasource extends BaseDataSource<ServiceModel> {

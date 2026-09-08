@@ -1,3 +1,9 @@
+import 'package:fix_now_aman_alkhdraa/provider/user_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+
+import '../core/config/di.dart';
+import '/repos/user_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -6,62 +12,81 @@ import '../views/favorites_view.dart';
 import '../views/home_view.dart';
 import '../views/profile_view.dart';
 
-class MainNavigationBarWidget extends StatefulWidget {
+class MainNavigationBarWidget extends ConsumerStatefulWidget {
   const MainNavigationBarWidget({super.key});
 
   @override
-  State<MainNavigationBarWidget> createState() =>
+  ConsumerState<MainNavigationBarWidget> createState() =>
       _MainNavigationBarWidgetState();
 }
 
-class _MainNavigationBarWidgetState extends State<MainNavigationBarWidget> {
+class _MainNavigationBarWidgetState
+    extends ConsumerState<MainNavigationBarWidget> {
   List<Widget> listView = [
     HomeView(),
     CartView(),
     FavoritesView(),
-    ProfileView(),
+    ProfileView(
+      userRepo: UserRepo(
+        internetConnectionChecker: getIt.get<InternetConnectionChecker>(),
+      ),
+    ),
   ];
   int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    var userListener = ref.watch(userProvider);
+
     return Scaffold(
-      appBar: selectedIndex == 0
-          ? AppBar(
-              centerTitle: false,
-              leading: SizedBox(
-                height: 40.h,
-                width: 40.w,
-                child: ClipRRect(
-                  borderRadius: BorderRadiusGeometry.circular(20.r),
-                  child: CircleAvatar(
-                    child: Image.network(
-                      'https://tse1.mm.bing.net/th/id/OIP.PKlD9uuBX0m4S8cViqXZHAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-                      fit: .fill,
+      appBar: userListener.when(
+        data: (data) {
+          return selectedIndex == 0
+              ? AppBar(
+                  centerTitle: false,
+                  leading: SizedBox(
+                    height: 40.h,
+                    width: 40.w,
+                    child: ClipRRect(
+                      borderRadius: BorderRadiusGeometry.circular(20.r),
+                      child: CircleAvatar(
+                        backgroundColor: Color(0xff).withAlpha(0),
+                        child: Image.network(
+                          
+                          data.image!,
+                          fit: .fill,
+                          errorBuilder: (context, error, stackTrace) => Icon(Icons.person,size: 30,),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              actions: [
-                IconButton(onPressed: () {}, icon: Icon(Icons.nightlife)),
-              ],
-              title: Column(
-                crossAxisAlignment: .start,
-                children: [
-                  Text('data'),
-                  Text('data', style: Theme.of(context).textTheme.bodyMedium),
-                ],
-              ),
-            )
-          : AppBar(title: Text('FixNow'), centerTitle: true),
+                  actions: [
+                    IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
+                  ],
+                  title: Column(
+                    crossAxisAlignment: .start,
+                    children: [
+                      Text('FixNow'),
+                      Text(
+                        data.firstName.toString(),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                )
+              : AppBar(title: Text('FixNow'), centerTitle: true);
+        },
+        error: (error, stackTrace) =>
+            AppBar(title: Text('FixNow'), centerTitle: true),
+        loading: () =>
+            AppBar(title: Center(child: CircularProgressIndicator())),
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
         onDestinationSelected: (int newValue) {
           selectedIndex = newValue;
           setState(() {});
         },
-        //! ما لازم هون ==================================
-              backgroundColor: Color(0xffF9F9F8),
 
         indicatorColor: Color(0xff).withAlpha(0),
         destinations: [

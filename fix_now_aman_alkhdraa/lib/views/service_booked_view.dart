@@ -1,3 +1,5 @@
+import 'package:fix_now_aman_alkhdraa/provider/cart_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '/views/cart_view.dart';
@@ -5,11 +7,12 @@ import 'package:flutter/material.dart';
 
 import '../widgets/main_navigation_bar_widget.dart';
 
-class ServiceBookedView extends StatelessWidget {
+class ServiceBookedView extends ConsumerWidget {
   const ServiceBookedView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+    ref.watch(cartProvider);
     double screenWidth = MediaQuery.widthOf(context);
     // double screenHeight = MediaQuery.heightOf(context);
 
@@ -59,7 +62,7 @@ class ServiceBookedView extends StatelessWidget {
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           Text(
-                            '##4%%##',
+                            '#FXN-8472',
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                         ],
@@ -70,7 +73,7 @@ class ServiceBookedView extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       Text(
-                        'BOOKING REF',
+                        'Emergency Plumbing',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       Text(
@@ -82,7 +85,7 @@ class ServiceBookedView extends StatelessWidget {
                         children: [
                           Icon(Icons.percent_outlined),
                           Text(
-                            '##4%%##',
+                            'Michael R.',
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ],
@@ -92,7 +95,7 @@ class ServiceBookedView extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       Text(
-                        'ADDRESS',
+                        'Oct 24, 2023 at 2:00 PM',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       Text(
@@ -100,7 +103,7 @@ class ServiceBookedView extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       Text(
-                        'ADDRESS',
+                        '123 Main St, Apt 4B',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
@@ -120,7 +123,6 @@ class ServiceBookedView extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 16.h),
-
                 SizedBox(
                   width: screenWidth,
                   child: ElevatedButton(

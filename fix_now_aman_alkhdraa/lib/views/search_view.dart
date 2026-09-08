@@ -1,52 +1,36 @@
+import '/provider/service_provider.dart';
+
+import '/provider/search_query_provider.dart';
+import '/provider/search_result_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '/views/details_view.dart';
 import 'package:flutter/material.dart';
 
-import '../models/services_model.dart';
+import '../models/service_model.dart';
 import '../widgets/card_widget.dart';
 
-class SearchView extends StatefulWidget {
+class SearchView extends ConsumerStatefulWidget {
   const SearchView({super.key});
 
   @override
-  State<SearchView> createState() => _SearchViewState();
+  ConsumerState<SearchView> createState() => _SearchViewState();
 }
 
-class _SearchViewState extends State<SearchView> {
+class _SearchViewState extends ConsumerState<SearchView> {
+  @override
+  void initState() {
+    //* ايقاف SearchController
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
+    var searchedService = ref.watch(searchResultProvider);
     double screenWidth = MediaQuery.widthOf(context);
     double screenHeight = MediaQuery.heightOf(context);
-    List<ServicesModel> list = [
-      ServicesModel(
-        name: 'name',
-        rating: 5.0,
-        description:
-            'Comprehensive home deep cleaning service including all rooms and appliances.',
-        price: 110,
-        image: 'image',
-        id: 1,
-      ),
-      ServicesModel(
-        name: 'name',
-        rating: 5.0,
-        description:
-            'Comprehensive home deep cleaning service including all rooms and appliances.',
-        price: 110,
-        image: 'image',
-        id: 2,
-      ),
-      ServicesModel(
-        name: 'name',
-        rating: 5.0,
-        description:
-            'Comprehensive home deep cleaning service including all rooms and appliances.',
-        price: 110,
-        image: 'image',
-        id: 3,
-      ),
-    ];
+    SearchController search = SearchController();
+   
     return Scaffold(
       appBar: AppBar(title: Text('FixNow')),
 
@@ -55,16 +39,37 @@ class _SearchViewState extends State<SearchView> {
         child: Column(
           crossAxisAlignment: .start,
           children: [
-            //!======================================================
-            //  SearchAnchor.bar(suggestionsBuilder: (BuildContext context, SearchController controller) {
-            //   final String input=controller.value.text;
-              
-            //   return list.where((ServicesModel item){list[0].name.contains(input).map((ServicesModel filterdService){})});
-              
-            //  },),
-            //!======================================================
+            SearchAnchor.bar(
+              searchController: search,
+              barHintText: 'Search services or professionals ...',
+              onChanged: (value) {
+                ref
+                    .read(searchQueryProvider.notifier)
+                    .updateQuery(query: value);
+              },
 
+              suggestionsBuilder:
+                  (BuildContext context, SearchController controller) {
+                    final String input = controller.value.text;
+                    List<ServiceModel> services = searchedService.value!;
+                    return services
+                        .where(
+                          (item) => services[item.id!].name!.contains(input),
+                        )
+                        .map(
+                          (filterItem) =>
+                              ListTile(title: Text(filterItem.name!)),
+                        );
+                  },
+            ),
+
+            //!======================================================
             // TextFormField(
+            //   onChanged: (value) {
+            //     ref
+            //         .read(searchQueryProvider.notifier)
+            //         .updateQuery(query: value);
+            //   },
             //   decoration: InputDecoration(
             //     prefixIcon: Icon(
             //       Icons.search,
@@ -90,28 +95,51 @@ class _SearchViewState extends State<SearchView> {
             //   ),
             // ),
             SizedBox(height: 24.h),
-            Expanded(
-              child: ListView.separated(
-                itemCount: list.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => DetailsView()),
+            searchedService.when(
+              data: (data) {
+                return Expanded(
+                  child: ListView.separated(
+                    itemCount: data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailsView(service: data[index]),
+                            ),
+                          );
+                        },
+                        child: CardWidget(
+                          cardHeight: 358.h,
+                          list: data,
+                          cardWidth: screenWidth.w,
+                        ),
                       );
                     },
-                    child: CardWidget(
-                      cardHeight: 358.h,
-                      list: list,
-                      cardWidth: screenWidth.w,
-                    ),
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return SizedBox(height: 16.h);
-                },
-              ),
+                    separatorBuilder: (BuildContext context, int index) {
+                      return SizedBox(height: 16.h);
+                    },
+                  ),
+                );
+              },
+              error: (Object error, StackTrace stackTrace) {
+                return Center(
+                  child: Column(
+                    children: [
+                      Icon(Icons.warning_sharp, size: 40),
+                      Text(
+                        error.toString(),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                );
+              },
+              loading: () {
+                return Center(child: CircularProgressIndicator());
+              },
             ),
           ],
         ),

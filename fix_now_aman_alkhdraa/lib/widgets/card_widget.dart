@@ -1,10 +1,13 @@
-import 'package:fix_now_aman_alkhdraa/repos/favorite_repo.dart';
+import '/provider/favorite_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '/repos/favorite_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../models/services_model.dart';
+import '../models/service_model.dart';
 
-class CardWidget extends StatelessWidget {
+class CardWidget extends ConsumerWidget {
   const CardWidget({
     super.key,
     required this.cardHeight,
@@ -15,13 +18,14 @@ class CardWidget extends StatelessWidget {
 
   final double cardHeight;
   final double cardWidth;
-  final List<ServicesModel> list;
+  final List<ServiceModel> list;
   // final  String heroTag;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // ref.watch(favoriteProvider);
     return Container(
-      height: 18+cardHeight.h,
+      height: 18 + cardHeight.h,
       width: cardWidth.w,
       decoration: BoxDecoration(
         color: Color(0xffFFFFFF),
@@ -39,15 +43,21 @@ class CardWidget extends StatelessWidget {
                 width: cardWidth,
                 alignment: .topRight,
                 decoration: BoxDecoration(
-                 //!!!!!!!!!!!!!!!!!!!!!!!!!!
-                  // image: DecorationImage(
-                  //   image: NetworkImage(list[1].image) ?? AssetImage('assets/image/logo.png'),
-                  //   fit: .fill,
-                  // ),
+                  image: DecorationImage(
+                    image:
+                        NetworkImage(list[1].image!) ??
+                        AssetImage('assets/image/logo.png'),
+                    fit: .fill,
+                  ),
                 ),
-                child: IconButton(onPressed: () {
-                  
-                }, icon: Icon(Icons.favorite)),
+                child: IconButton(
+                  onPressed: () {
+                    // ref
+                    //     .read(favoriteProvider.notifier)
+                    //     .toggleFavorite(service: list[]);//!!!!!!!!!!! ما حاطه index
+                  },
+                  icon: Icon(Icons.favorite),
+                ),
               ),
             ),
           ),
@@ -79,7 +89,7 @@ class CardWidget extends StatelessWidget {
                   list[1].description!,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                SizedBox(height: 20,),
+                SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: .spaceBetween,
                   children: [
@@ -90,7 +100,11 @@ class CardWidget extends StatelessWidget {
                     SizedBox(
                       height: 32.h,
                       width: 100.w,
-                      child: FilledButton(onPressed: () {}, child: Text('book'))),
+                      child: FilledButton(
+                        onPressed: () {},
+                        child: Text('book'),
+                      ),
+                    ),
                   ],
                 ),
               ],
