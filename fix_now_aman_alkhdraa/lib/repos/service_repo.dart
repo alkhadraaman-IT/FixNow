@@ -6,11 +6,12 @@ import '../core/config/di.dart';
 import '/datasources/service_remote_datasource.dart';
 import '/models/service_model.dart';
 
-final serviceRemoteDatasourceProvider = Provider<ServiceRemoteDatasource>((
-  ref,
-) {
-  return getIt.get<ServiceRemoteDatasource>();
-});
+// final serviceRemoteDatasourceProvider = Provider<ServiceRemoteDatasource>((
+//   ref,
+// ) {
+//   return ServiceRemoteDatasource(dio: null, secureStorage: null);
+//   // return getIt.get<ServiceRemoteDatasource>();
+// });
 
 final serviceRepoProvider = Provider<ServiceRepo>((ref) {
   final serviceRemoteDatasource = ref.read(serviceRemoteDatasourceProvider);
@@ -30,9 +31,14 @@ class ServiceRepo {
   });
 
   Future<List<ServiceModel>?> getAll() async {
+    print(await internetConnectionChecker.hasConnection);
     if (await internetConnectionChecker.hasConnection) {
-      List<dynamic>? serversList = await serviceRemoteDatasource
-          .getAll();
+      var serversList = await serviceRemoteDatasource.getAll();
+
+      print('************');
+      print( await serviceRemoteDatasource.getAll());
+      print(serversList);
+      print('************');
       if (serversList != null) {
         List<ServiceModel>? services = List.generate(serversList.length, (
           index,
@@ -41,8 +47,7 @@ class ServiceRepo {
         });
         return services;
       }
-            return null;
-
+      return null;
     }
     throw Exception('No internet connection');
   }

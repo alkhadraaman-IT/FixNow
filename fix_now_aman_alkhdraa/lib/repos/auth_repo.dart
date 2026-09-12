@@ -21,24 +21,26 @@ final appPrefrencesProvider = Provider((ref) {
 });
 
 final authRemoteDatasource = Provider((ref) {
-  final dio = ref.read(dioProvider);
-  final secureSessionStorage = ref.read(secureSessionStorageProvider);
-  final appPrefrences = ref.read(appPrefrencesProvider);
-  return AuthRemoteDatasource(
-    dio: dio,
-    secureSessionStorage: secureSessionStorage,
-    appPrefrences: appPrefrences,
-  );
+  // final dio = ref.read(dioProvider);
+  // final secureSessionStorage = ref.read(secureSessionStorageProvider);
+  // final appPrefrences = ref.read(appPrefrencesProvider);
+  return AuthRemoteDatasourceProcider;
+  // return AuthRemoteDatasource(
+  //   dio: dio,
+  //   secureSessionStorage: secureSessionStorage,
+  //   appPrefrences: appPrefrences, secureStorage: null,
+  // );
 });
 
 final authRepoProvider = Provider((ref) {
   final appPrefrences = getIt.get<AppPrefrences>();
   final secureSessionStorage = ref.read(secureSessionStorageProvider);
   final internetConnectionChecker = getIt.get<InternetConnectionChecker>();
+  final authRemoteDatasource=ref.read(AuthRemoteDatasourceProcider);
   return AuthRepo(
     appPrefrences: appPrefrences,
     secureSessionStorage: secureSessionStorage,
-    internetConnectionChecker: internetConnectionChecker,
+    internetConnectionChecker: internetConnectionChecker, authRemoteDatasource: authRemoteDatasource,
   );
 });
 
@@ -46,15 +48,18 @@ class AuthRepo {
   final InternetConnectionChecker internetConnectionChecker;
   final AppPrefrences appPrefrences;
   final SecureSessionStorage secureSessionStorage;
+  final AuthRemoteDatasource authRemoteDatasource;
   AuthRepo({
     required this.internetConnectionChecker,
     required this.appPrefrences,
     required this.secureSessionStorage,
+    required this.authRemoteDatasource,
   });
 
   Future<bool> login({required LoginModel loginInfo}) async {
     if (await internetConnectionChecker.hasConnection) {
-      return await getIt.get<AuthRemoteDatasource>().login(
+      // return await getIt.get<AuthRemoteDatasource>().login(
+      return await authRemoteDatasource.login(
         loginInfo: loginInfo.toMap(),
       );
     }
@@ -63,30 +68,32 @@ class AuthRepo {
 
   Future logout() async {
     if (await internetConnectionChecker.hasConnection) {
-      return getIt.get<AuthRemoteDatasource>().logout();
+      return await authRemoteDatasource.logout();
+      // return getIt.get<AuthRemoteDatasource>().logout();
     }
     throw Exception('No internet connection');
   }
 
   Future<bool> isCompleteOnboarding() async {
-    if (await internetConnectionChecker.hasConnection) {
+    // if (await internetConnectionChecker.hasConnection) {
       return appPrefrences.isCompletOnbording();
-    }
-    throw Exception('No internet connection');
+    // }
+    // throw Exception('No internet connection');
   }
 
   Future<void> completeOnboarding() async {
-    if (await internetConnectionChecker.hasConnection) {
+    // if (await internetConnectionChecker.hasConnection) {
       return appPrefrences.completOnbording();
-    }
-    throw Exception('No internet connection');
+    // }
+    // throw Exception('No internet connection');
   }
 
   Future<bool> restoreSession() async {
-    if (await internetConnectionChecker.hasConnection) {
+    // if (await internetConnectionChecker.hasConnection) {
       UserSessionModel? userSession = await secureSessionStorage.getSession();
+      print('userSession:${userSession}|||||||||||||||||||||');
       return userSession != null ? true : false;
-    }
-    throw Exception('No internet connection');
+    // }
+    // throw Exception('No internet connection');
   }
 }

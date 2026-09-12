@@ -2,6 +2,7 @@ import 'package:fix_now_aman_alkhdraa/provider/favorite_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../widgets/dialog_no_net_widget.dart';
 import '/views/details_view.dart';
 import 'package:flutter/material.dart';
 
@@ -73,8 +74,8 @@ class FavoritesView extends ConsumerWidget {
                           );
                         },
                         child: CardWidget(
-                          cardHeight: 358.h,
-                          list: data,
+                          cardHeight: 362.h,
+                          list: data[index],
                           cardWidth: screenWidth.w,
                         ),
                       );
@@ -85,7 +86,10 @@ class FavoritesView extends ConsumerWidget {
                   ),
                 );
               },
-              error: (error, stackTrace) => Center(
+              error: (error, stackTrace) {
+                    if (error == 'No internet connection') {
+                    return DialogErrorNoNet();
+                  } else{return Center(
                 child: Column(
                   children: [
                     Icon(Icons.warning_sharp, size: 40),
@@ -95,7 +99,8 @@ class FavoritesView extends ConsumerWidget {
                     ),
                   ],
                 ),
-              ),
+              );}
+              },
               loading: () => Center(child: CircularProgressIndicator()),
             ),
           ],

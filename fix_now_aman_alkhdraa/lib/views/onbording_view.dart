@@ -7,9 +7,6 @@ import '../core/models/onbording_model.dart';
 import '../repos/auth_repo.dart';
 import '../widgets/onbording_widget.dart';
 import 'login_view.dart';
-import 'onbording1_view.dart';
-import 'onbording2_view.dart';
-import 'onbording3_view.dart';
 
 class OnbordingView extends ConsumerStatefulWidget {
   const OnbordingView({super.key});
@@ -19,11 +16,18 @@ class OnbordingView extends ConsumerStatefulWidget {
 }
 
 class _OnbordingViewState extends ConsumerState<OnbordingView> {
+  PageController onbordingController = PageController();
+  PageController buttonController = PageController();
+  @override
+  void dispose() {
+    onbordingController.dispose();
+    buttonController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.widthOf(context);
-    PageController onbordingController = PageController();
-    PageController buttonController = PageController();
 
     int index = 0;
     List<OnbordingModel> onbordingList = [
@@ -103,8 +107,8 @@ class _OnbordingViewState extends ConsumerState<OnbordingView> {
                   print(index);
                   return FilledButton(
                     onPressed: () async {
-                      // if (onbordingList[index].button == 'GET STARTED') {
-                      if (index == 2) {
+                      if (onbordingList[index].button == 'GET STARTED') {
+                        // if (index == 2) {
                         await ref.read(authRepoProvider).completeOnboarding();
                         Navigator.pushReplacement(
                           context,
@@ -112,11 +116,11 @@ class _OnbordingViewState extends ConsumerState<OnbordingView> {
                         );
                       }
                       onbordingController.nextPage(
-                        duration: Duration(seconds: 1),
+                        duration: Duration(milliseconds: 500),
                         curve: Curves.linear,
                       );
                       buttonController.nextPage(
-                        duration: Duration(seconds: 1),
+                        duration: Duration(milliseconds: 500),
                         curve: Curves.linear,
                       );
                       // print(index);

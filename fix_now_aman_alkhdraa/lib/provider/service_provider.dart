@@ -29,14 +29,15 @@ class ServiceAsyncNotifierProvider extends AsyncNotifier<List<ServiceModel>> {
 
   @override
   Future<List<ServiceModel>> build() async {
+    print('<<<<<<<<<<<<<< build ServiceAsyncNotifierProvider >>>>>>>>>>>>>>>>');
+
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // var services = ref.read(_serviceRepo);
-
+    print("v==========================================================");
     List<ServiceModel>? servicesResult = await _serviceRepo.getAll();
 
     if (servicesResult == null) {
-         print('############################$servicesResult');
- throw Exception("failed to fecth data.");
+      throw Exception("failed to fecth data.");
     }
     return servicesResult;
   }

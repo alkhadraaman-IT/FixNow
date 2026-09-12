@@ -19,6 +19,7 @@ import 'core/theme/app_theme.dart';
 import '/widgets/main_navigation_bar_widget.dart';
 import 'core/config/di.dart';
 import 'models/cart_item_model.dart';
+import 'models/provider_model.dart';
 import 'models/service_model.dart';
 import 'views/login_view.dart';
 import 'views/service_booked_view.dart';
@@ -29,12 +30,15 @@ void main() async {
 
   await Hive.initFlutter();
 
-  // Hive.registerAdapter(ProviderModelAdapter());
-  // Hive.registerAdapter(ServiceModelAdapter());
-  // Hive.registerAdapter(CartItemAdapter());
+  Hive.registerAdapter(ProviderModelAdapter());
+  Hive.registerAdapter(ServiceModelAdapter());
+  Hive.registerAdapter(CartItemModelAdapter());
 
-  Box<CartItemModel> cartBox = await Hive.openBox<CartItemModel>(
+  Box<ServiceModel> cartBox = await Hive.openBox<ServiceModel>(
     AppKeys.cartBoxKey,
+  );
+  Box<CartItemModel> cartWithQuatityBox = await Hive.openBox<CartItemModel>(
+    AppKeys.cartBoxWithQuatityKey,
   );
   Box<ServiceModel> favoriteBox = await Hive.openBox<ServiceModel>(
     AppKeys.favoriteBoxKey,
@@ -50,61 +54,8 @@ class FixNow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // var themeListener = ref.watch(themeProvider);
-    var userSessionLis = ref.watch(userSessionProvider);
-    ref.listen<AsyncValue<void>>(userSessionProvider, (previous, next) {
-      next.when(
-        data: (data) {
-          if (previous!.isLoading && next.hasValue) {
-            if (userSessionLis.value!.isviewOnboarding == false) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => OnbordingView()),
-              );
-            } else if (userSessionLis.value!.authenticated == false) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginView()),
-              );
-            } else {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MainNavigationBarWidget(),
-                ),
-              );
-            }
-          }
-        },
-        error: (Object error, StackTrace stackTrace) {
-          return Dialog(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                spacing: 20,
-                children: [
-                  Text('An error occurred'),
-                  Row(
-                    mainAxisAlignment: .end,
-                    children: [
-                      TextButton(
-                        onPressed: () async {
-                          await FlutterExitApp.exitApp();
-                        },
-                        child: Text('Exit the app'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-        loading: () {
-          return SplashView();
-        },
-      );
-    });
-
+    // var userSessionListener = ref.watch(userSessionProvider);
+    
     return ScreenUtilInit(
       minTextAdapt: true,
       splitScreenMode: true,

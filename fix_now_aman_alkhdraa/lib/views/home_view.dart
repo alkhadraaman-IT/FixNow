@@ -1,14 +1,15 @@
-import '/provider/service_provider.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '/views/search_view.dart';
-
-import '/views/details_view.dart';
-import 'package:flutter/material.dart';
-
 import '../models/service_model.dart';
 import '../widgets/card_widget.dart';
+import '../widgets/card_home_widget.dart';
+import '../widgets/dialog_no_net_widget.dart';
+import '/provider/service_provider.dart';
+import '/views/details_view.dart';
+import '/views/search_view.dart';
 
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});
@@ -262,7 +263,7 @@ class HomeView extends ConsumerWidget {
               SizedBox(height: 16.h),
               servicesListener.when(
                 data: (data) => SizedBox(
-                  height: 332.h,
+                  height: 355.h,
                   child: ListView.separated(
                     scrollDirection: .horizontal,
                     itemCount: data.length,
@@ -272,98 +273,12 @@ class HomeView extends ConsumerWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DetailsView(service: data[index],),
+                              builder: (context) =>
+                                  DetailsView(service: data[index]),
                             ),
                           );
                         },
-                        child: Container(
-                          height: 312.5.h,
-                          width: 240.w,
-                          decoration: BoxDecoration(
-                            color: Color(0xffFFFFFF),
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(color: Color(0xffBDC9C9)),
-                          ),
-                          child: Column(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadiusGeometry.circular(
-                                  12.r,
-                                ),
-                                child: Hero(
-                                  tag: 'service image ${data[index].id}',
-                                  child: Container(
-                                    height: 178.5.h,
-                                    width: 240.w,
-                                    alignment: .topRight,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image:
-                                            NetworkImage(data[index].image!) ??
-                                            AssetImage('assets/image/logo.png'),
-                                        fit: .fill,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  children: [
-                                    Wrap(
-                                      // mainAxisAlignment: .spaceBetween,
-                                      children: [
-                                        Text(
-                                          data[index].name!,
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.titleMedium,
-                                        ),
-                                        Spacer(),
-                                        Row(
-                                          children: [
-                                            Icon(Icons.star),
-                                            Text(
-                                              '${data[index].rating}(${data[index].rating}+)',
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyLarge,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 24.h),
-                                    Row(
-                                      mainAxisAlignment: .spaceBetween,
-                                      children: [
-                                        RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: '\$${data[index].price}',
-                                                style: Theme.of(
-                                                  context,
-                                                ).textTheme.labelLarge,
-                                              ),
-                                              TextSpan(
-                                                text: '/hr',
-                                                style: Theme.of(
-                                                  context,
-                                                ).textTheme.bodyMedium,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        child: CardHomeWidget(data: data[index]),
                       );
                     },
                     separatorBuilder: (BuildContext context, int index) {
@@ -371,17 +286,23 @@ class HomeView extends ConsumerWidget {
                     },
                   ),
                 ),
-                error: (error, stackTrace) => Center(
-                  child: Column(
-                    children: [
-                      Icon(Icons.warning_sharp, size: 40),
-                      Text(
-                        error.toString(),
-                        style: Theme.of(context).textTheme.bodyMedium,
+                error: (error, stackTrace) {
+                  if (error == 'No internet connection') {
+                    return DialogErrorNoNet();
+                  } else {
+                    return Center(
+                      child: Column(
+                        children: [
+                          Icon(Icons.warning_sharp, size: 40),
+                          Text(
+                            error.toString(),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    );
+                  }
+                },
                 loading: () => Center(child: CircularProgressIndicator()),
               ),
             ],

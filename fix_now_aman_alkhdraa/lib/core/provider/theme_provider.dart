@@ -15,18 +15,22 @@
 //   return ThemeProvider();
 // });
 // class ThemeProvider extends AsyncNotifier<bool> {
+
 //   @override
-//   bool build() {
+//   bool build() {    print('<<<<<<<<<<<<<< build themeProvider >>>>>>>>>>>>>>>>');
+
 //     return false;
 //   }
 
-//   Future<bool> loadTheme() async {
+//   Future<bool> loadTheme() async {print('<<<<<<<<<<<<<< loadTheme >>>>>>>>>>>>>>>>');
 //     bool theme= getIt.get<SharedPreferences>().getBool(AppKeys.isDarkThemeKey) ?? false;
 //     state =AsyncData(theme);
 //     return state.value!;
 //   }
 
 //   void toggleTheme() {
+// print('<<<<<<<<<<<<<< toggleTheme >>>>>>>>>>>>>>>>');
+
 //     bool theme =
 //         getIt.get<SharedPreferences>().getBool(AppKeys.isDarkThemeKey) ?? false;
 //     state = !theme;

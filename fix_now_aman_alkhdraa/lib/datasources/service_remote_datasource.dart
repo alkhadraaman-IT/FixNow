@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../core/constants/app_key.dart';
+import 'network_exception.dart';
+import 'user_remote_datasource.dart';
 
 final dioProvider = Provider(((ref) => Dio()));
 
@@ -11,7 +13,7 @@ final secureStorageProvider = Provider((ref) {
   return FlutterSecureStorage();
 });
 
-final serviceRemoteDatasource = Provider((ref) {
+final serviceRemoteDatasourceProvider = Provider((ref) {
   final dio = ref.read(dioProvider);
   final secureStorage = ref.read(secureStorageProvider);
   return ServiceRemoteDatasource(dio: dio, secureStorage: secureStorage);
@@ -29,31 +31,37 @@ class ServiceRemoteDatasource {
 
   final Dio dio;
   late Response response;
-  final String baseUrl = 'http://127.0.0.1:8000/api';
   final String endPoint = 'services';
 
   FlutterSecureStorage secureStorage;
   ServiceRemoteDatasource({required this.dio, required this.secureStorage});
 
-  Future<List<Map<String, dynamic>>?> getAll() async {
+  Future<List<dynamic>?> getAll() async {
     try {
+      print("=.=.=.=.=.=.=${await secureStorage.read(key: AppKeys.accessTokenKey)}");
       response = await dio.get(
-        '$baseUrl/$endPoint',
+        '${AppKeys.baseUrlKey}/$endPoint',
         options: Options(
           headers: {
             "Authorization":
-                          "Bearer fixnow_token_c906fff322194985b6332d7c1ac4a54b",
-
-                // "Bearer ${secureStorage.read(key: AppKeys.accessTokenKey)}",
+                    // "Bearer $constToken",
+                "Bearer ${await secureStorage.read(key: AppKeys.accessTokenKey)}",
           },
         ),
       );
       if (response.statusCode == 200) {
+        print(response.data.runtimeType);
+        print(' ================================================ ');
+        print(response.data);
+
         return response.data;
       }
+      print('111111');
       return null;
     } catch (e) {
+      print('222222');
       print(e);
+      throw NetworkExceptions.getErrorMessage(e);
       return null;
     }
   }
@@ -61,7 +69,7 @@ class ServiceRemoteDatasource {
   Future<Map<String, dynamic>?> getOne({required String itemId}) async {
     try {
       response = await dio.get(
-        '$baseUrl/$endPoint/$itemId',
+        '${AppKeys.baseUrlKey}/$endPoint/$itemId',
         options: Options(
           headers: {
             "Authorization":
@@ -75,61 +83,8 @@ class ServiceRemoteDatasource {
       return null;
     } catch (e) {
       print(e);
+      throw NetworkExceptions.getErrorMessage(e);
       return null;
     }
   }
 }
-
-// class ServiceRemoteDatasource extends BaseDataSource<ServiceModel> {
-//   final Dio dio;
-//   ServiceRemoteDatasource({required this.dio});
-//   final String endpoint;
-//   ServiceRemoteDatasource._();
-//   static ServiceRemoteDatasource? _instance;
-//   static ServiceRemoteDatasource getInstance() {
-//     if (_instance == null) {
-//       _instance = ServiceRemoteDatasource._();
-//     }
-//     return _instance!;
-//   }
-
-//   @override
-//   Future<bool> createItem({required ServiceModel newItem}) {
-//   }
-
-//   @override
-//   Future<bool> deleteItem({required String deleteItemId}) {
-//   }
-
-//   @override
-//   Future<List<dynamic>?> getAll() async {
-//     try {
-//       response = await dio.get('$baseUrl/$endpoint');
-//       if (response.statusCode == 200) {
-//         return response.data;
-//       }
-//       return null;
-//     } catch (e) {
-//       print(e);
-//       return null;
-//     }
-//   }
-
-//   @override
-//   Future<ServiceModel?> getOne({required String itemId}) async {
-//     try {
-//       response = await dio.get('$baseUrl/$endpoint/$itemId');
-//       if (response.statusCode == 200) {
-//         return response.data;
-//       }
-//       return null;
-//     } catch (e) {
-//       print(e);
-//       return null;
-//     }
-//   }
-
-//   @override
-//   Future<bool> updateItem({required ServiceModel updeteItem}) {
-//   }
-// }

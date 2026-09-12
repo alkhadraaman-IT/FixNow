@@ -1,3 +1,4 @@
+//! مالي بحاجته ما عندي quatity
 import 'package:hive_ce_flutter/adapters.dart';
 
 import '/models/service_model.dart';

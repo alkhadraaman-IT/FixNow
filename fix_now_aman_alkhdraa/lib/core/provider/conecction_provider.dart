@@ -15,6 +15,8 @@ class ConecctionProvider extends AsyncNotifier<void> {
   ConecctionProvider({required this.internetConnectionChecker});
 
   Future<void> isConnection() async {
+    print('<<<<<<<<<<<<<< isConnection >>>>>>>>>>>>>>>>');
+
     bool isConnection = await internetConnectionChecker.hasConnection;
     if (isConnection) {
       state = AsyncData(null);
@@ -22,5 +24,7 @@ class ConecctionProvider extends AsyncNotifier<void> {
   }
 
   @override
-  Future<void> build() async {}
+  Future<void> build() async {
+    print('<<<<<<<<<<<<<< build ConecctionProvider >>>>>>>>>>>>>>>>');
+  }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../provider/auth_priveder.dart';
+import '../provider/auth_provider.dart';
 
 Future<dynamic> showModalBottomSheetLogout(BuildContext context, double screenWidth, WidgetRef ref) {
     return showModalBottomSheet(
@@ -11,10 +11,10 @@ Future<dynamic> showModalBottomSheetLogout(BuildContext context, double screenWi
                     context: context,
                     builder: (BuildContext context) {
                       return Container(
-                        height: 380, //!================
+                        height: 380.h, //!================
                         padding: EdgeInsets.all(16),
                         child: Column(
-                          spacing: 16,
+                          spacing: 16.h,
                           children: [
                             Text(
                               'Logout',
@@ -24,7 +24,7 @@ Future<dynamic> showModalBottomSheetLogout(BuildContext context, double screenWi
                               'Are you sure you want to logout? You\nwill need to enter your credentials again\nto access your account.',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
-                            SizedBox(height: 40.h - 16),
+                            SizedBox(height: 40.h - 16.h),
                             SizedBox(
                               width: screenWidth,
                               child: FilledButton(

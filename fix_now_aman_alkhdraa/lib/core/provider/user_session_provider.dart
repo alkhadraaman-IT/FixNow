@@ -13,6 +13,8 @@ final userSessionProvider =
 class UserSessionProvider extends AsyncNotifier<UserSessionState> {
   @override
   Future<UserSessionState> build() async {
+    print('<<<<<<<<<<<<<< build UserSessionProvider >>>>>>>>>>>>>>>>');
+
     //final viewOnboarding = await ref.read(authRepoProvider).completeOnboarding();
     final authenticated = await ref.read(authRepoProvider).restoreSession();
     final isviewOnboarding = await ref
@@ -23,6 +25,7 @@ class UserSessionProvider extends AsyncNotifier<UserSessionState> {
       // viewOnboarding: viewOnboarding,
       isviewOnboarding: isviewOnboarding,
     );
+    print('userSessionState::::::::::$userSessionState');
     return userSessionState;
   }
 }

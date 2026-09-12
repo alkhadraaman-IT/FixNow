@@ -106,6 +106,13 @@ class AppTheme {
       unselectedItemColor: Color(0xff3E4949),
       backgroundColor: Color(0xffF9F9F8),
     ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: Color(0xffffffff),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(12),
+      ),
+      alignment: Alignment(0, 0),
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -212,6 +219,14 @@ class AppTheme {
       selectedItemColor: Color(0xff006065),
       unselectedItemColor: Color(0xff3E4949),
       backgroundColor: Color(0xff1A1C1C),
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: Color(0xff000000),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(12),
+      ),
+      alignment: Alignment(0, 0),
+      insetPadding:EdgeInsets.all(16), 
     ),
   );
 }

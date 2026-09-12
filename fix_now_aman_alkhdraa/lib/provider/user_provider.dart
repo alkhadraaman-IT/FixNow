@@ -7,8 +7,12 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import '../models/user_model.dart';
 import '/repos/user_repo.dart';
 
-final userProvider = AsyncNotifierProvider<UserProvider,UserModel>(() {
-  return UserProvider(userRepo: UserRepo(internetConnectionChecker: getIt.get<InternetConnectionChecker>()));
+final userProvider = AsyncNotifierProvider<UserProvider, UserModel>(() {
+  return UserProvider(
+    userRepo: UserRepo(
+      internetConnectionChecker: getIt.get<InternetConnectionChecker>(),
+    ),
+  );
 });
 
 class UserProvider extends AsyncNotifier<UserModel> {
@@ -16,6 +20,8 @@ class UserProvider extends AsyncNotifier<UserModel> {
   UserProvider({required this._userRepo});
   @override
   Future<UserModel> build() async {
+    print('<<<<<<<<<<<<<< build UserProvider >>>>>>>>>>>>>>>>');
+
     UserModel? user = await _userRepo.getOne();
 
     if (user == null) {

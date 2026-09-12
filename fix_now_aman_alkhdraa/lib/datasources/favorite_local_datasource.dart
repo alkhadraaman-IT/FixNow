@@ -22,6 +22,7 @@ class FavoriteLocalDatasource {
     bool isCurrentlyFavorite = favoriteServites.any((element) {
       return element.id == service.id;
     });
+      print("isCurrentlyFavorite:$isCurrentlyFavorite");
     if (isCurrentlyFavorite) {
       await favoriteBox.delete(service.id);
     } else {

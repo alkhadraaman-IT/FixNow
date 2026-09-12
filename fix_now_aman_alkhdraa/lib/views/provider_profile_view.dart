@@ -1,7 +1,10 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../models/provider_model.dart';
 import '../models/service_model.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/fix_now_app_bar_widget.dart';
 
 class ProviderProfileView extends StatelessWidget {
   const ProviderProfileView({super.key});
@@ -11,25 +14,39 @@ class ProviderProfileView extends StatelessWidget {
     double screenWidth = MediaQuery.widthOf(context);
     double screenHeight = MediaQuery.heightOf(context);
     ServiceModel user = ServiceModel(
-      name: 'name',
+      name: 'Ahmad Maintenance',
       rating: 4.8,
-      description: 'descriptiondescription description',
+      description:
+          'Complete heating and air conditioning maintenance featuring comprehensive coil cleaning, eco-friendly refrigerant gas top-up, airflow efficiency calibration, and thorough electrical safety inspections for home comfort.',
       price: 500,
-      image: 'image',
+      includes: [
+      "Pressure coil washing for indoor/outdoor units",
+      "Freon gas level check and refill",
+      "Condensate drain line flushing",
+      "Compressor load and current testing",
+      "Cooling airflow temperature calibration"
+    ],
+        category: "Appliance Repair",
+
+      image:
+          'https://tse2.mm.bing.net/th/id/OIP.Wxp22I7YPiHxMFKHmg6eHgHaHa?r=0&w=626&h=626&rs=1&pid=ImgDetMain&o=7&rm=3',
       id: 1,
+      provider: ProviderModel(specialty: "HVAC Systems Specialist", experienceYears: 12),
     );
     return Scaffold(
-      appBar: AppBar(title: Text('FixNow')),
+      // appBar: FixNowAppBarWidget(),//!!!!!!!!!!!
+      appBar: AppBar(title: Text('FixNow'),),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
+            spacing: 20.h,
             crossAxisAlignment: .start,
             children: [
               SizedBox(height: 16.h),
               Container(
                 width: screenWidth.w,
-                height: 274.h,
+                height: 474.h,
                 padding: EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   color: Color(0xffffffff),
@@ -45,18 +62,21 @@ class ProviderProfileView extends StatelessWidget {
                       children: [
                         Hero(
                           tag: 'provider profile image 1',
-                          child: Container(
-                            height: 96.h,
-                            width: 96.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12.r),
-                              border: Border.all(color: Color(0xffE8E8E7)),
-                            ),
-                            child: Image.network(
-                              'src',
-                              errorBuilder: (context, error, stackTrace) {
-                                return Icon(Icons.warning_sharp);
-                              },
+                          child: ClipRRect(
+                            borderRadius: BorderRadiusGeometry.circular(12.r),
+                            child: Container(
+                              height: 96.h,
+                              width: 96.h,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(color: Color(0xffE8E8E7)),
+                              ),
+                              child: Image.network(
+                                'https://tse2.mm.bing.net/th/id/OIP.Wxp22I7YPiHxMFKHmg6eHgHaHa?r=0&w=626&h=626&rs=1&pid=ImgDetMain&o=7&rm=3',
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(Icons.warning_sharp);
+                                },
+                              ),
                             ),
                           ),
                         ),
@@ -76,9 +96,9 @@ class ProviderProfileView extends StatelessWidget {
                       child: Row(
                         mainAxisSize: .min,
                         children: [
-                          Icon(Icons.h_mobiledata, color: Color(0xff2E7D32)),
+                          Icon(Icons.plumbing, color: Color(0xff2E7D32)),
                           Text(
-                            'dfghjk',
+                            'HVAC Specialist',
                             style: TextStyle(
                               color: Color(0xff2E7D32),
                               fontSize: 12,
@@ -118,7 +138,7 @@ class ProviderProfileView extends StatelessWidget {
                                 child: Divider(color: Color(0xffBDC9C9)),
                               ),
                               Text(
-                                '${user.price} Jobs Completed',
+                                '12 Jobs Completed',
                                 style: Theme.of(context).textTheme.labelSmall,
                               ),
                               SizedBox(
@@ -132,12 +152,12 @@ class ProviderProfileView extends StatelessWidget {
                           ),
                         ),
                         Text(
-                      '${user.price} Years Exp.',
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
+                          '8 Years Exp.',
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
                       ],
                     ),
-                    
+
                     SizedBox(
                       width: screenWidth.w,
                       height: 40.h,
@@ -198,11 +218,11 @@ class ProviderProfileView extends StatelessWidget {
                       ),
                       child: ListTile(
                         title: Text(
-                          '${user.name}',
+                          '${user.category}',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         subtitle: Text(
-                          '${user.description}',
+                          '${user.includes![index]}',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         trailing: Text(
@@ -218,7 +238,7 @@ class ProviderProfileView extends StatelessWidget {
                 ),
               ),
               Container(
-                height: screenHeight / 8 + 30.h,
+                height: user.includes!.length.h * 40.h,
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Color(0xffF3F4F3),
@@ -232,16 +252,17 @@ class ProviderProfileView extends StatelessWidget {
                       'Availability',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
+                    SizedBox(height: 8,),
                     Expanded(
                       child: ListView.separated(
-                        itemCount: 2,
+                        itemCount: user.includes!.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Row(
                             children: [
                               Icon(Icons.check_sharp, size: 12),
                               SizedBox(width: 8.w),
                               Text(
-                                user.description!,
+                               user.includes![index],
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ],
@@ -293,7 +314,7 @@ class ProviderProfileView extends StatelessWidget {
                             ],
                           ),
                           Text(
-                            '${user.description}',
+                                    '${user.provider!.specialty} • ${user.provider!.experienceYears} yrs exp',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],

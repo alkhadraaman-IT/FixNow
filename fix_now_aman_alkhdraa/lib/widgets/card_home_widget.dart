@@ -1,40 +1,26 @@
-import '/provider/favorite_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '/repos/favorite_repo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../models/service_model.dart';
+import '../provider/favorite_provider.dart';
 
-class CardWidget extends ConsumerStatefulWidget {
-  const CardWidget({
-    super.key,
-    required this.cardHeight,
-    required this.cardWidth,
-    required this.list,
-    // required this.heroTag,
-  });
+class CardHomeWidget extends ConsumerStatefulWidget {
+  final ServiceModel data;
 
-  final double cardHeight;
-  final double cardWidth;
-  final ServiceModel list;
+  const CardHomeWidget({super.key, required this.data});
 
   @override
-  ConsumerState<CardWidget> createState() => _CardWidgetState();
+  ConsumerState<CardHomeWidget> createState() => _CardHomeWidgetState();
 }
 
-class _CardWidgetState extends ConsumerState<CardWidget> {
+class _CardHomeWidgetState extends ConsumerState<CardHomeWidget> {
   @override
   Widget build(BuildContext context) {
-    //  bool isFavorite =ref.watch(favoriteProvider).value!.any((element) {
-    //     return element.id == list.id;
-    //   });
     ref.watch(favoriteProvider);
-
     return Container(
-      height: 18 + widget.cardHeight.h,
-      width: widget.cardWidth.w,
+      height: 250.h,
+      width: 240.w,
       decoration: BoxDecoration(
         color: Color(0xffFFFFFF),
         borderRadius: BorderRadius.circular(12.r),
@@ -45,15 +31,15 @@ class _CardWidgetState extends ConsumerState<CardWidget> {
           ClipRRect(
             borderRadius: BorderRadiusGeometry.circular(12.r),
             child: Hero(
-              tag: 'service image ${widget.list.id}',
+              tag: 'service image ${widget.data.id}',
               child: Container(
-                height: 192.h,
-                width: widget.cardWidth,
+                height: 178.5.h,
+                width: 240.w,
                 alignment: .topRight,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image:
-                        NetworkImage(widget.list.image!) ??
+                        NetworkImage(widget.data.image!) ??
                         AssetImage('assets/image/logo.png'),
                     fit: .fill,
                   ),
@@ -65,12 +51,12 @@ class _CardWidgetState extends ConsumerState<CardWidget> {
                   onPressed: () {
                     ref
                         .read(favoriteProvider.notifier)
-                        .toggleFavorite(service: widget.list);
+                        .toggleFavorite(service: widget.data);
                   },
                   icon:
                       ref
                           .watch(favoriteProvider.notifier)
-                          .isFavoriteService(widget.list)
+                          .isFavoriteService(widget.data)
                       ? Icon(Icons.favorite)
                       : Icon(
                           // icon: isFavorite?Icon(Icons.favorite): Icon(
@@ -84,49 +70,49 @@ class _CardWidgetState extends ConsumerState<CardWidget> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
+              mainAxisAlignment: .spaceBetween,
               children: [
-                // Wrap(
-                Row(
-                  mainAxisAlignment: .spaceBetween,
+                Wrap(
+                  // mainAxisAlignment: .spaceBetween,
                   children: [
                     Expanded(
                       child: Text(
-                        widget.list.name!,
-                        style: Theme.of(context).textTheme.labelLarge,
+                        maxLines: 2,
+                        widget.data.name!,
                         overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
-                    // Spacer(),
+                    Spacer(),
                     Row(
                       children: [
                         Icon(Icons.star),
                         Text(
-                          widget.list.rating.toString(),
-                          style: Theme.of(context).textTheme.bodySmall,
+                          '${widget.data.rating}(${widget.data.rating}+)',
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
                     ),
                   ],
                 ),
-                Text(
-                  widget.list.description!,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                SizedBox(height: 20),
+                SizedBox(height: 24.h),
+                // Spacer(),
+
                 Row(
                   mainAxisAlignment: .spaceBetween,
                   children: [
-                    Text(
-                      '\$${widget.list.price}',
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                    SizedBox(
-                      height: 32.h,
-                      width: 100.w,
-                      child: FilledButton(
-                        onPressed: () {},
-                        child: Text('book'),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '\$${widget.data.price}',
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          TextSpan(
+                            text: '/hr',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
                       ),
                     ),
                   ],

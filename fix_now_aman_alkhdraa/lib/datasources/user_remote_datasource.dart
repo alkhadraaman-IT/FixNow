@@ -1,27 +1,33 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../core/constants/app_key.dart';
+import 'network_exception.dart';
+
+String constToken = 'fixnow_token_000e55907bf84b7581004d35d0f58a79';
 
 class UserRemoteDatasource {
   final Dio dio;
   final FlutterSecureStorage secureStorage;
   UserRemoteDatasource({required this.dio, required this.secureStorage});
 
-  final String baseUrl = 'http://127.0.0.1:8000/api';
   final String endPoint = 'profile';
   late Response response;
 
   Future<Map<String, dynamic>?> getOne() async {
-    response = await dio.get(
-      '$baseUrl/$endPoint',
-      options: Options(
-        headers: {
-          "Authorization":
-              "Bearer fixnow_token_c906fff322194985b6332d7c1ac4a54b",
-              // "Bearer ${secureStorage.read(key: AppKeys.accessTokenKey)}",
-        },
-      ),
-    );
-    return response.data;
+    try {
+      response = await dio.get(
+        '${AppKeys.baseUrlKey}/$endPoint',
+        options: Options(
+          headers: {
+            "Authorization":
+                // "Bearer $constToken",
+                "Bearer ${await secureStorage.read(key: AppKeys.accessTokenKey)}",
+          },
+        ),
+      );
+      return response.data;
+    } catch (e) {
+      throw NetworkExceptions.getErrorMessage(e);
+    }
   }
 }

@@ -28,7 +28,7 @@ class DetailsView extends ConsumerWidget {
     //   id: 1,
     // );
     return Scaffold(
-      appBar: AppBar(title: Text("FixNow")),
+      appBar: AppBar(title: Text("FixNow")), //!!!!!!!!!!!!!!
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -37,11 +37,11 @@ class DetailsView extends ConsumerWidget {
               child: Expanded(
                 child: Column(
                   crossAxisAlignment: .start,
-                  spacing: 16,
+                  spacing: 16.h,
                   children: [
                     SizedBox(height: 16.h),
                     Container(
-                      height: 425.h,
+                      height: 435.h,
                       width: screenWidth.w,
                       decoration: BoxDecoration(
                         color: Color(0xffFFFFFF),
@@ -74,6 +74,7 @@ class DetailsView extends ConsumerWidget {
                             padding: const EdgeInsets.all(16),
                             child: Column(
                               crossAxisAlignment: .start,
+                              spacing: 12.h,
                               children: [
                                 Row(
                                   mainAxisAlignment: .spaceBetween,
@@ -92,13 +93,13 @@ class DetailsView extends ConsumerWidget {
                                       child: Row(
                                         children: [
                                           Icon(
-                                            Icons.icecream_outlined,
+                                            Icons.plumbing,
                                             size: 12,
                                             color: Color(0xffC7FBFF),
                                           ),
                                           SizedBox(width: 8.w),
                                           Text(
-                                            '${service.name}',
+                                            '${service.category}',
                                             style: TextStyle(
                                               color: Color(0xffC7FBFF),
                                               fontWeight: FontWeight(600),
@@ -204,17 +205,19 @@ class DetailsView extends ConsumerWidget {
                           SizedBox(height: 16.h),
                           Expanded(
                             child: ListView.separated(
-                              itemCount: 5,
+                              itemCount: service.includes!.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return Row(
                                   children: [
                                     Icon(Icons.check_sharp, size: 12),
                                     SizedBox(width: 8.w),
-                                    Text(
-                                      service.description!,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium,
+                                    SizedBox(
+                                      child: Text(
+                                        service.includes![index],
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
+                                      ),
                                     ),
                                   ],
                                 );
@@ -235,10 +238,10 @@ class DetailsView extends ConsumerWidget {
                     SizedBox(
                       height: screenHeight / 3.h,
                       child: ListView.separated(
-                        itemCount: 2,
+                        itemCount: 1,
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
-                            height: (130 + 40).h,
+                            height: (130 + 47).h,
                             width: screenWidth.w,
                             padding: EdgeInsets.all(16),
                             decoration: BoxDecoration(
@@ -259,22 +262,29 @@ class DetailsView extends ConsumerWidget {
                                         ),
                                       );
                                     },
-                                    child: CircleAvatar(
-                                      child: Hero(
-                                        tag:
-                                            'provider profile image ${service.id}',
-                                        child: Image.network('${service.image}'),
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          BorderRadiusGeometry.circular(50.r),
+                                      child: CircleAvatar(
+                                        child: Hero(
+                                          tag:
+                                              'provider profile image ${service.id}',
+                                          child: Image.network(
+                                            '${service.provider!.image}',
+                                            fit: .fill,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                   title: Text(
-                                    '${service.name}',
+                                    '${service.provider!.name}',
                                     style: Theme.of(
                                       context,
-                                    ).textTheme.titleMedium,
+                                    ).textTheme.labelLarge,
                                   ),
                                   subtitle: Text(
-                                    '${service.name}',
+                                    '${service.provider!.specialty} • ${service.provider!.experienceYears} yrs exp',
                                     style: Theme.of(
                                       context,
                                     ).textTheme.labelMedium,
@@ -288,13 +298,13 @@ class DetailsView extends ConsumerWidget {
                                       children: [
                                         Icon(Icons.star),
                                         Text(
-                                          service.rating.toString(),
+                                          service.provider!.rating.toString(),
                                           style: Theme.of(
                                             context,
                                           ).textTheme.bodySmall,
                                         ),
                                         Text(
-                                          '(${service.rating})',
+                                          '(${service.provider!.reviewCount})',
                                           style: Theme.of(
                                             context,
                                           ).textTheme.labelMedium,
@@ -303,19 +313,18 @@ class DetailsView extends ConsumerWidget {
                                     ),
                                     SizedBox(
                                       height: 32.h,
-                                      width: 71.97000122070312.w,
+                                      width: 100.w,
                                       child: FilledButton(
-
                                         onPressed: () {
-                                        //   ref
-                                        //       .read(cartProvider.notifier)
-                                        //       .addToCart(service: service);
+                                          // ref
+                                          //     .read(cartProvider.notifier)
+                                          //     .addToCart(service: service);
                                         },
                                         child: Text(
                                           'select',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodyLarge,
+                                          style: TextStyle(
+                                            color: Color(0xffffffff),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -353,7 +362,7 @@ class DetailsView extends ConsumerWidget {
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       Text(
-                        '(\$${service.price})',
+                        '\$${service.price}',
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ],
@@ -362,15 +371,36 @@ class DetailsView extends ConsumerWidget {
                     height: 40.h,
                     width: 154.w,
 
-                    child: FilledButton(
-                      onPressed: () {
-                        if(ref.read(cartProvider.notifier).isInCartService(service)){
-                          null;
-                        }
-                        ref.read(cartProvider.notifier).addToCart(service: service);
-                      },
-                      child: Text('Add to Cart'),
-                    ),
+                    child:
+                        !ref
+                            .watch(cartProvider.notifier)
+                            .isInCartService(service)
+                        ? FilledButton(
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Successfully added to the cart.',
+                                  ),
+                                ),
+                              );
+
+                              ref
+                                  .read(cartProvider.notifier)
+                                  .addToCart(service: service);
+                            },
+                            child: Text('Add to Cart'),
+                          )
+                        : FilledButton(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: Color(0xffBDC9C9),
+                            ),
+                            onPressed: () {},
+                            child: Text(
+                              'Add to Cart',
+                              style: TextStyle(color: Color(0xff000000)),
+                            ),
+                          ),
                   ),
                 ],
               ),

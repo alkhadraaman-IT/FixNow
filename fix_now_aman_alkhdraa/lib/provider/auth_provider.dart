@@ -7,26 +7,31 @@ import '/repos/auth_repo.dart';
 //   return AuthRepo();
 // });
 
-final authPriveder = AsyncNotifierProvider<AuthPriveder, void>(() {
+final authPriveder = AsyncNotifierProvider<AuthProvider, void>(() {
   // final authRepo = ref.read(authRepoProvider);
-  return AuthPriveder();
+  return AuthProvider();
 });
 
-class AuthPriveder extends AsyncNotifier<void> {
+class AuthProvider extends AsyncNotifier<void> {
   // AuthRepo authRepo;
   // AuthPriveder({required this.authRepo});
   @override
-  Future<void> build() async {}
+  Future<void> build() async {
+    print('<<<<<<<<<<<<<< build authProvider >>>>>>>>>>>>>>>>');
+  }
 
   Future<void> login({required LoginModel loginInfo}) async {
     state = AsyncLoading();
+    print('<<<<<<<<<<<<<< login >>>>>>>>>>>>>>>>');
 
     try {
-      bool isLoged = await ref.read(authRepoProvider).login(loginInfo: loginInfo);
+      bool isLoged = await ref
+          .read(authRepoProvider)
+          .login(loginInfo: loginInfo);
       if (!isLoged) {
         state = AsyncError('check your data', StackTrace.current);
       }
-      return;
+      state=AsyncData(null);
     } catch (e, stack) {
       state = AsyncError(e, stack);
     }
@@ -34,12 +39,15 @@ class AuthPriveder extends AsyncNotifier<void> {
 
   Future<void> logout() async {
     try {
+      print('<<<<<<<<<<<<<< logout >>>>>>>>>>>>>>>>');
+
       state = AsyncLoading();
       bool isLoged = await ref.read(authRepoProvider).logout();
+      
       if (isLoged) {
         state = AsyncError('error try again', StackTrace.current);
       }
-      return;
+      state=AsyncData(null);
     } catch (e, stack) {
       state = AsyncError(e, stack);
     }
@@ -47,13 +55,17 @@ class AuthPriveder extends AsyncNotifier<void> {
 
   Future<void> isCompleteOnboarding() async {
     try {
-      state = AsyncLoading();
-      final bool isCompleteOnboarding = await ref.read(authRepoProvider).isCompleteOnboarding();
+      print('<<<<<<<<<<<<<< isCompleteOnboarding >>>>>>>>>>>>>>>>');
 
-      if (isCompleteOnboarding==true) {
+      state = AsyncLoading();
+      final bool isCompleteOnboarding = await ref
+          .read(authRepoProvider)
+          .isCompleteOnboarding();
+
+      if (isCompleteOnboarding == true) {
         state = AsyncData(isCompleteOnboarding);
       }
-      return;
+      state=AsyncData(null);
     } catch (e, stack) {
       print(e);
       state = AsyncError(e, stack);
@@ -62,10 +74,11 @@ class AuthPriveder extends AsyncNotifier<void> {
 
   Future<void> completeOnboarding() async {
     try {
+      print('<<<<<<<<<<<<<< completeOnboarding >>>>>>>>>>>>>>>>');
+
       state = AsyncLoading();
       await ref.read(authRepoProvider).completeOnboarding();
       state = AsyncData(null);
-      return;
     } catch (e, stack) {
       print(e);
       state = AsyncError(e, stack);

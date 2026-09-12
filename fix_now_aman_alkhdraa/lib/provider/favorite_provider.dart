@@ -10,7 +10,8 @@ final favoriteProvider =
     AsyncNotifierProvider<FavoriteProvider, List<ServiceModel>>(() {
       return FavoriteProvider(
         favoriteBox: Hive.box(AppKeys.favoriteBoxKey),
-        favoriteRepo: FavoriteRepo(//* لازم استخدم FavoriteRepoProvider
+        favoriteRepo: FavoriteRepo(
+          //* لازم استخدم FavoriteRepoProvider
           favoriteLocalDatasource: FavoriteLocalDatasource(
             favoriteBox: Hive.box(AppKeys.favoriteBoxKey),
           ),
@@ -25,30 +26,46 @@ class FavoriteProvider extends AsyncNotifier<List<ServiceModel>> {
 
   @override
   Future<List<ServiceModel>> build() async {
+    print('<<<<<<<<<<<<<< build FavoriteProvider >>>>>>>>>>>>>>>>');
+
     List<ServiceModel> favoriteServites = _favoriteRepo.getFavoreteServites();
+    print(favoriteServites);
     return favoriteServites;
   }
 
   Future<void> toggleFavorite({required ServiceModel service}) async {
-    await _favoriteRepo.toggleFavorite(service: service);
+    print('<<<<<<<<<<<<<< toggleFavorite >>>>>>>>>>>>>>>>');
+
     bool isCurrentlyFavorite = favoriteBox.values.any((element) {
-      return element == service.id;
+      return element.id == service.id;
     });
-    List<ServiceModel> favoriteServites = state.value!;
+
+    List<ServiceModel> favoriteServites = _favoriteRepo.getFavoreteServites();
+    await _favoriteRepo.toggleFavorite(service: service);
+    print("favoriteServites::::::$favoriteServites");
+    print('$isCurrentlyFavorite-------------');
+
     if (isCurrentlyFavorite) {
+      print('$isCurrentlyFavorite-------------true');
       favoriteServites = favoriteServites.where((element) {
         return element.id != service.id;
       }).toList();
     } else {
+      print('$isCurrentlyFavorite-------------false');
       favoriteServites = [...favoriteServites, service];
-      state = AsyncData(favoriteServites);
     }
+    print("favoriteServites:::**:::$favoriteServites");
+    state = AsyncData(favoriteServites);
+  }
 
-    bool isFavoriteService(ServiceModel service) {
-      bool isFavorite = state.value!.any((element) {
-        return element.id == service.id;
-      });
-      return isFavorite;
-    }
+  bool isFavoriteService(ServiceModel service) {
+    print('<<<<<<<<<<<<<< isFavoriteService >>>>>>>>>>>>>>>>');
+    List<ServiceModel> favoriteServites = state.value ?? [];
+
+    bool isFavorite = favoriteServites.any((element) {
+      return element.id == service.id;
+    });
+    print('isFavorite:$isFavorite');
+    return isFavorite;
   }
 }

@@ -1,40 +1,55 @@
+import '../repos/auth_repo.dart';
 import '/models/login_model.dart';
-import '/provider/auth_priveder.dart';
+import '../provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../widgets/main_navigation_bar_widget.dart';
 
-class LoginView extends ConsumerWidget {
+class LoginView extends ConsumerStatefulWidget {
   const LoginView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends ConsumerState<LoginView> {
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+  @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     double screenWidth = MediaQuery.widthOf(context);
     double screenHeight = MediaQuery.heightOf(context);
-    TextEditingController email = TextEditingController();
-    TextEditingController password = TextEditingController();
+
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-    ref.listen<AsyncValue<void>>(authPriveder, (previous, next) {
-      if (previous?.isLoading == true && next.hasError) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(next.error.toString())));
-      }
+    // ref.listen<AsyncValue<void>>(authPriveder, (previous, next) {
+    //   if (previous?.isLoading == true && next.hasError) {
+    //     ScaffoldMessenger.of(
+    //       context,
+    //     ).showSnackBar(SnackBar(content: Text(next.error.toString())));
+    //   }
 
-      if (previous?.isLoading == true && next.hasValue) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const MainNavigationBarWidget()),
-        );
-      }
-    });
+    //   if (previous?.isLoading == true && next.hasValue) {
+    //     Navigator.pushReplacement(
+    //       context,
+    //       MaterialPageRoute(builder: (_) => const MainNavigationBarWidget()),
+    //     );
+    //   }
+    // });
 
     ref.listen<AsyncValue<void>>(authPriveder, (previous, next) {
       if (previous!.isLoading && next.hasValue) {
-        Navigator.push(
+        print('login next.hasValue: ${next.hasValue}');
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => MainNavigationBarWidget()),
         );
@@ -45,7 +60,7 @@ class LoginView extends ConsumerWidget {
         ).showSnackBar(SnackBar(content: Text(next.error.toString())));
       }
     });
-    
+
     bool isShowPassword = false;
     return Scaffold(
       body: Form(
@@ -222,15 +237,16 @@ class LoginView extends ConsumerWidget {
                     ),
                     SizedBox(height: 24.h),
                     FilledButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (formKey.currentState?.validate() ?? false) {
+                          await ref.read(authRepoProvider).restoreSession();
                           ref
                               .read(authPriveder.notifier)
                               .login(
                                 loginInfo: LoginModel(
                                   email: email.text,
                                   password: password.text,
-                                )
+                                ),
                               );
                           // Navigator.push(
                           //   context,

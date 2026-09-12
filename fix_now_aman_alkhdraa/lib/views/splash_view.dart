@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter_exit_app/flutter_exit_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '/core/provider/user_session_provider.dart';
 import '/views/login_view.dart';
 import '/widgets/main_navigation_bar_widget.dart';
@@ -20,17 +23,102 @@ class SplashView extends ConsumerStatefulWidget {
 class _SplashViewState extends ConsumerState<SplashView> {
   @override
   void initState() {
-    Timer(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => OnbordingView()),
-      );
-    });
+    // Timer(Duration(seconds: 3), () {
+    //   Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => OnbordingView()),
+    //   );
+    // });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<void>>(userSessionProvider, (previous, next) {
+      var userSessionListener = ref.watch(userSessionProvider);
+      print('userSessionListener:${userSessionListener.value}');
+      Timer(Duration(seconds: 3), (){
+        next.when(
+        data: (data) {
+          if (previous!.isLoading && next.hasValue) {
+            if (userSessionListener.value!.isviewOnboarding == false) {
+              print('isviewOnboarding == false');
+              // return OnbordingView();
+              //  Timer(Duration(seconds: 3), () {
+              //   Navigator.pushReplacement(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => OnbordingView()),
+              //   );
+              // });
+             
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => OnbordingView()),
+              );
+            } else if (userSessionListener.value!.authenticated == false) {
+              print('authenticated == false');
+              // Timer(Duration(seconds: 3), () {
+              //   Navigator.pushReplacement(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => LoginView()),
+              //   );
+              // });
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginView()),
+              );
+
+              // return LoginView();
+            } else {
+              print('authenticated == true');
+              // return MainNavigationBarWidget();
+              // Timer(Duration(seconds: 3), () {
+              //   Navigator.pushReplacement(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => MainNavigationBarWidget()),
+              //   );
+              // });
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MainNavigationBarWidget(),
+                ),
+              );
+            }
+          }
+        },
+        error: (Object error, StackTrace stackTrace) {
+          print('error :Exit the app');
+
+          return Dialog(
+            child: Column(
+              spacing: 20.h,
+              children: [
+                Text('An error occurred'),
+                Row(
+                  mainAxisAlignment: .end,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        await FlutterExitApp.exitApp();
+                      },
+                      child: Text('Exit the app'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+        loading: () {
+          print('SplashView');
+
+          return SplashView();
+        },
+      );
+      });
+    });
+
     // ref.watch(userSessionProvider);
     // ref.listen<AsyncValue<void>>(userSessionProvider, (previous, next) {
     //   if (previous!.isLoading && next.hasValue) {

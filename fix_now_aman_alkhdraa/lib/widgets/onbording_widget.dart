@@ -1,4 +1,4 @@
-import '/provider/auth_priveder.dart';
+import '../provider/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../repos/auth_repo.dart';
@@ -33,6 +33,7 @@ class _OnbordingWidgetState extends ConsumerState<OnbordingWidget> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(widget.onbordingModel.image),
+                fit: .cover
               ),
             ),
           ),
