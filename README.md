@@ -27,7 +27,7 @@
 
 ## 🔗 الروابط والمستودعات
 
-* **مستودع الخادم (Backend):** تم تطويره ونشره بواسطة المهندس **محمد الحجار** - [رابط مستودع الباك إند]((https://github.com/Mohammad-Alhajjar/fixnow_backend.git))
+* **مستودع الخادم (Backend):** تم تطويره ونشره بواسطة المهندس **محمد الحجار** - [رابط مستودع الباك إند](https://github.com/Mohammad-Alhajjar/fixnow_backend.git)
 
 ---
 
@@ -35,7 +35,7 @@
 
 ```bash
 # 1. Clone the repository
-git clone [https://github.com/USERNAME/FixNow.git](https://github.com/USERNAME/FixNow.git)
+git clone [https://github.com/USERNAME/FixNow.git](https://github.com/alkhadraaman-IT/FixNow) 
 
 # 2. Install dependencies
 flutter pub get
